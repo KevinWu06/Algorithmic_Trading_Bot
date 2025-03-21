@@ -52,10 +52,10 @@ class MarkowitzOptimizer:
         
     def fetch_data(self, start_date=None, end_date=None):
         """
-        Fetch historical stock data and calculate returns
+        Fetch historical stock data and calculate returns, 10 years worth
         """
         if start_date is None:
-            start_date = datetime.now() - timedelta(days=365)
+            start_date = datetime.now() - timedelta(days=3650)
         if end_date is None:
             end_date = datetime.now()
             
@@ -141,7 +141,7 @@ class MarkowitzOptimizer:
 
 # Example usage
 if __name__ == "__main__":
-    # Define stock tickers
+    # Define stock tickers, adjustable
     tickers = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'META']
     
     # Create optimizer instance
