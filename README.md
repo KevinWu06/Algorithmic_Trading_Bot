@@ -39,21 +39,15 @@ It then uses Modern Portfolio Theory (Markowitz Optimization) to determine optim
 - Calculates key performance metrics
 - Visualizes results
 
-## Installation
-
-1. Install required packages:
 ## Requirements
 - Python 3.6+
-- numpy
-- pandas 
-- yfinance
-- matplotlib
-- tqdm
 
 ## How to Run
 
 1. Clone the repository
-2. Install dependencies: pip install -r requirements
+2. Install dependencies: 
+'''bash
+pip install -r requirements
 
 ## Dependencies
 - yfinance: Market data access
