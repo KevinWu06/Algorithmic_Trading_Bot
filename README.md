@@ -46,9 +46,9 @@ It then uses Modern Portfolio Theory (Markowitz Optimization) to determine optim
 
 1. Clone the repository
 2. Install dependencies: 
-'''bash
+```bash
 pip install -r requirements
-
+```
 ## Dependencies
 - yfinance: Market data access
 - pandas: Data analysis
@@ -62,11 +62,15 @@ pip install -r requirements
 ## Usage
 
 ### Run Backtesting
-Test the strategy on historical data: python backtesting.py
-
+Test the strategy on historical data: 
+```bash
+python backtesting.py
+```
 ### Start Trading Bot
-Launch the live trading system: python mpt_trading_bot.py
-
+Launch the live trading system: 
+```bash
+python mpt_trading_bot.py
+```
 ## Risk Management
 - Maximum position size limits
 - Automated stop-loss orders
