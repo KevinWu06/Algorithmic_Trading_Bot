@@ -1,3 +1,7 @@
 # AlgorithmicTradingBot
 Stock and Investment Portfolio Optimizer
-In Progress
+
+## How to run
+
+1. Clone the repository
+2. pip install numpy pandas yfinance matplotlib
