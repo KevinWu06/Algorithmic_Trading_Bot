@@ -28,12 +28,31 @@ class MarkowitzOptimizer:
             
         # Download stock data
         data = pd.DataFrame()
+        valid_tickers = []
+        
         for ticker in self.tickers:
-            stock = yf.download(ticker, start=start_date, end=end_date)
-            data[ticker] = stock['Close']
+            try:
+                stock = yf.download(ticker, start=start_date, end=end_date, progress=False)
+                if not stock.empty:
+                    data[ticker] = stock['Close']
+                    valid_tickers.append(ticker)
+            except Exception as e:
+                print(f"Error downloading {ticker}: {str(e)}")
+                continue
+        
+        if data.empty:
+            raise ValueError("No valid data downloaded for any tickers")
             
-        # Calculate daily returns
-        self.returns = data.pct_change().dropna()
+        # Update tickers list to only include valid ones
+        self.tickers = valid_tickers
+        
+        # Calculate daily returns with explicit fill_method=None
+        self.returns = data.pct_change(fill_method=None).dropna()
+        
+        # Check if we have enough data
+        if self.returns.empty:
+            raise ValueError("Not enough data to calculate returns")
+            
         self.mean_returns = self.returns.mean()
         self.cov_matrix = self.returns.cov()
         
@@ -49,6 +68,9 @@ class MarkowitzOptimizer:
         Returns:
             tuple: (optimal_weights, expected_return, volatility, sharpe_ratio)
         """
+        if self.returns is None or self.returns.empty:
+            raise ValueError("No return data available. Run fetch_data first.")
+            
         results = []
         
         for _ in range(num_portfolios):
@@ -63,7 +85,11 @@ class MarkowitzOptimizer:
             )  # Annualized volatility
             
             # Calculate Sharpe Ratio (assuming risk-free rate = 0.01)
-            sharpe_ratio = (portfolio_return - 0.01) / portfolio_std
+            # Add check for zero volatility
+            if portfolio_std == 0:
+                sharpe_ratio = 0
+            else:
+                sharpe_ratio = (portfolio_return - 0.01) / portfolio_std
             
             results.append({
                 'weights': weights,
@@ -75,9 +101,16 @@ class MarkowitzOptimizer:
         # Convert results to DataFrame
         results_df = pd.DataFrame(results)
         
+        # Handle case where all Sharpe ratios are NaN
+        if results_df['sharpe'].isna().all():
+            raise ValueError("Unable to calculate valid portfolio metrics")
+            
         # Find the portfolio with highest Sharpe Ratio
-        optimal_idx = results_df['sharpe'].idxmax()
-        optimal_portfolio = results_df.iloc[optimal_idx]
+        optimal_idx = results_df['sharpe'].fillna(-np.inf).idxmax()
+        if pd.isna(optimal_idx):
+            raise ValueError("No valid optimal portfolio found")
+            
+        optimal_portfolio = results_df.iloc[int(optimal_idx)]
         
         return (
             optimal_portfolio['weights'],
