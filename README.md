@@ -61,6 +61,11 @@ pip install -r requirements
 
 ## Usage
 
+### Get Stock Weights
+Print the optimal weights of selected stocks:
+```bash
+python S_and_P500_top_30.py
+```
 ### Run Backtesting
 Test the strategy on historical data: 
 ```bash
