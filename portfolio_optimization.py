@@ -22,7 +22,7 @@ class MarkowitzOptimizer:
         Fetch historical stock data and calculate returns
         """
         if start_date is None:
-            start_date = datetime.now() - timedelta(days=365)
+            start_date = datetime.now() - timedelta(days=15*365)
         if end_date is None:
             end_date = datetime.now()
             
