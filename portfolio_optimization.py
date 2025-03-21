@@ -3,40 +3,7 @@ import pandas as pd
 import yfinance as yf
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
-'''
-This implementation includes:
-1. A MarkowitzOptimizer class that handles all portfolio optimization calculations
-2. Data fetching using yfinance for historical stock prices
-3. Portfolio optimization using Monte Carlo simulation to find the optimal weights
 
-4. Calculation of key metrics:
-        Expected returns
-        Portfolio volatility (risk)
-        Sharpe ratio (risk-adjusted return)
-5. Visualization of the efficient frontier
-
-To use this code, install: pip install numpy pandas yfinance matplotlib
-
-The model uses several key linear algebra concepts:
-    1. Matrix multiplication for calculating portfolio variance
-    2. Covariance matrix computation
-    3. Vector operations for portfolio returns
-
-This is implementing the formula: σp = √(wᵀΣw), where:
-    w is the weight vector
-    Σ is the covariance matrix
-    wᵀ is the transpose of the weight vector
-
-To use the model, simply create an instance with desired stock tickers and run the optimization:
-
-# Example usage
-tickers = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'META']
-optimizer = MarkowitzOptimizer(tickers)
-optimizer.fetch_data()
-optimal_weights, exp_return, volatility, sharpe = optimizer.optimize_portfolio()
-
-The model will return the optimal portfolio weights that maximize the Sharpe ratio (risk-adjusted return) based on historical data. 
-'''
 class MarkowitzOptimizer:
     def __init__(self, tickers):
         """
@@ -52,10 +19,10 @@ class MarkowitzOptimizer:
         
     def fetch_data(self, start_date=None, end_date=None):
         """
-        Fetch historical stock data and calculate returns, 10 years worth
+        Fetch historical stock data and calculate returns
         """
         if start_date is None:
-            start_date = datetime.now() - timedelta(days=3650)
+            start_date = datetime.now() - timedelta(days=365)
         if end_date is None:
             end_date = datetime.now()
             
@@ -137,27 +104,4 @@ class MarkowitzOptimizer:
         plt.xlabel('Volatility')
         plt.ylabel('Expected Return')
         plt.title('Efficient Frontier')
-        plt.show()
-
-# Example usage
-if __name__ == "__main__":
-    # Define stock tickers, adjustable
-    tickers = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'META']
-    
-    # Create optimizer instance
-    optimizer = MarkowitzOptimizer(tickers)
-    
-    # Fetch data for the last year
-    returns = optimizer.fetch_data()
-    
-    # Find optimal portfolio
-    optimal_weights, exp_return, volatility, sharpe = optimizer.optimize_portfolio()
-    
-    # Print results
-    print("\nOptimal Portfolio Weights:")
-    for ticker, weight in zip(tickers, optimal_weights):
-        print(f"{ticker}: {weight:.4f}")
-    
-    print(f"\nExpected Annual Return: {exp_return:.4f}")
-    print(f"Annual Volatility: {volatility:.4f}")
-    print(f"Sharpe Ratio: {sharpe:.4f}") 
+        plt.show() 
