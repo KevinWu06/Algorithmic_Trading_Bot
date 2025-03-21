@@ -6,6 +6,7 @@ from portfolio_optimization import MarkowitzOptimizer
 import time
 import logging
 from typing import Dict, List, Tuple
+from real_time_data import MarketDataStream
 
 class MPTTradingBot:
     def __init__(self, 
@@ -46,11 +47,15 @@ class MPTTradingBot:
             format='%(asctime)s - %(levelname)s - %(message)s'
         )
         self.logger = logging.getLogger('MPTTradingBot')
+        # Add market data stream
+        self.market_data = MarketDataStream(self.tickers)
         
     def initialize_portfolio(self):
         """
         Build initial portfolio based on MPT optimization
         """
+        exp_returns, cov_matrix = self.market_data.get_market_metrics()
+
         try:
             # Get optimal portfolio weights
             optimizer = MarkowitzOptimizer(self.tickers)
@@ -237,6 +242,34 @@ class MPTTradingBot:
                 f"Weight: {weight:.2%}, "
                 f"Value: ${value:,.2f}"
             )
+    def run(self):
+        """Main bot loop"""
+        try:
+            # Start market data stream
+            self.market_data.start()
+            
+            # Initialize portfolio
+            self.initialize_portfolio()
+            
+            while True:
+                # Process market data
+                while not self.market_data.data_queue.empty():
+                    data = self.market_data.data_queue.get()
+                    self._process_market_data(data)
+                
+                # Check stop losses
+                self.check_stop_losses()
+                
+                # Check if rebalancing is needed
+                if self.check_rebalance():
+                    self.rebalance_portfolio()
+                
+                time.sleep(1)
+                
+        except KeyboardInterrupt:
+            print("\nStopping bot...")
+        finally:
+            self.market_data.stop()
 
 def run_trading_bot():
     """
