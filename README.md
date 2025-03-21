@@ -39,7 +39,7 @@ It then uses Modern Portfolio Theory (Markowitz Optimization) to determine optim
 - Calculates key performance metrics
 - Visualizes results
 
-## Requirements
+## Version Requirements
 - Python 3.6+
 
 ## How to Run
